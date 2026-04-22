@@ -55,4 +55,11 @@ test.describe("Playwright.dev - Community", () => {
     await page.goto("/community/welcome");
     await expect(page).toHaveURL(/community/);
   });
+
+  test("GitHub link visible on homepage", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.getByRole("link", { name: /github/i }).first(),
+    ).toBeVisible();
+  });
 });
