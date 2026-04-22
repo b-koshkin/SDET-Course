@@ -1,0 +1,16 @@
+{
+  "name": "ci-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for playwright.dev with CI parallelization",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.43.0",
+    "@types/node": "^25.6.0",
+    "typescript": "^5.4.0"
+  }
+}

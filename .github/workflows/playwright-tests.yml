@@ -1,0 +1,69 @@
+name: Playwright Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - continous_integration/**
+
+# Cancel in-progress runs for same PR
+concurrency:
+  group: playwright-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# Minimal read-only permissions
+permissions:
+  contents: read
+
+jobs:
+  playwright-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: continous_integration
+    env:
+      CI: true
+
+    steps:
+      # Check out source code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Set up Node.js LTS with Yarn cache
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: yarn
+          cache-dependency-path: continous_integration/yarn.lock
+
+      # Install dependencies (frozen lockfile)
+      - name: Install dependencies
+        run: yarn install --immutable --immutable-cache --check-cache
+
+      # Install Playwright browsers and system dependencies
+      - name: Install Playwright browsers
+        run: yarn playwright install --with-deps
+
+      # Run all Playwright tests in parallel
+      - name: Run Playwright tests
+        run: yarn playwright test
+
+      # Upload HTML report for review (always, even on failure)
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: continous_integration/playwright-report/
+          retention-days: 30
+
+      # Upload traces for debugging failed tests (always)
+      - name: Upload traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: continous_integration/test-results/**/trace*.zip
+          retention-days: 30
