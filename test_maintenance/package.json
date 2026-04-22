@@ -1,0 +1,12 @@
+{
+  "name": "test-maintenance",
+  "version": "1.0.0",
+  "description": "Playwright test maintenance project",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:report": "npx playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest"
+  }
+}
